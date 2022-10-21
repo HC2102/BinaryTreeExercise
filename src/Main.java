@@ -2,16 +2,19 @@ public class Main {
     public static void main(String[] args) {
         BinaryTree bt = new BinaryTree();
         bt.insert(5);
-        bt.insert(4);
-        bt.insert(3);
         bt.insert(2);
-        bt.insert(1);
+        bt.insert(16);
+        bt.insert(-4);
+        bt.insert(3);
+        bt.deleteNode(bt.root, -4);
         System.out.println("PosOrder");
         bt.posOrder(bt.root);
         System.out.println("Inorder");
         bt.inOrder(bt.root);
         System.out.println("PreOrder");
         bt.preOrder(bt.root);
+        System.out.println("Breadth");
+        bt.breadth(bt.root);
 //        System.out.println("clear a tree");
 //        bt.clear();
 //        System.out.println("isEmpty: "+bt.isEmpty());

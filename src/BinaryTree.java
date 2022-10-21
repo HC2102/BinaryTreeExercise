@@ -1,3 +1,6 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class BinaryTree {
     Node root;
     //check if empty
@@ -64,13 +67,23 @@ public class BinaryTree {
         return null;
     }
     //breadth first search
-    public void breadth(){
-        int h = height(root); //height start from root
-        int i;
-        for(i = 1; i<h; i++){
-            printCurrentLevel(root,i);
+    public void breadth(Node root){
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+        while(!queue.isEmpty()){
+            Node temp = queue.poll();
+            System.out.println(temp.value+" ");
+            //add left child to the queue
+            if(temp.left != null){
+                queue.add(temp.left);
+            }
+            //add right child to the queue
+            if(temp.right!=null){
+                queue.add(temp.right);
+            }
         }
     }
+
     //find height
     public int height(Node root){
         if(root == null) return 0; //if tree is empty then height is o
@@ -121,39 +134,99 @@ public class BinaryTree {
         //add the result of these wth 1 (1 for counting the root)
         return 1+count(p.left)+count(p.right);
     }
-    //!
     public int max(Node p){
         if( p ==null){
             return -1;
         }
-        int res = p.value;
-        int lres = max(p.left);
-        int rres = max(p.right);
-        if(lres>res){
-            res = lres;
-        }else{
-            res = rres;
+        Node pointer = p;
+        while(pointer.right != null){
+            pointer = pointer.right;
         }
-        return res;
+        return pointer.value;
     }
-   //!
     public int min(Node p){
         if( p ==null){
             return -1;
         }
-        int res = p.value;
-        int lres = min(p.left);
-        int rres = min(p.right);
-        if(lres<res){
-            res = lres;
-        }else{
-            res = rres;
+        Node pointer = p;
+        while(pointer.left != null){
+            pointer = pointer.left;
         }
-        return res;
+        return pointer.value;
     }
-//    public Node deleteRecursive(Node root, int key){
-//
-//    }
+    public Node getMinimumKey(Node curr){
+        while(curr.left!= null){
+            curr = curr.left;
+        }
+        return curr;
+    }
+    public Node deleteNode(Node root, int value){
+        //pointer to store the parent of the current node
+        Node parent = null;
+        //start with the root node
+        Node curr = root;
+        //search key in the BST and set its parent pointer
+        while(curr!=null && curr.value != value){
+            //update the parent to the current node
+            parent = curr;
+            //if the given key is less than the current node, go to the left subtree
+            if(value <curr.value){
+                curr = curr.left;
+            }
+            //otherwise go to the right subtree
+            else{
+                curr = curr.right;
+            }
+        }
+        //return if the key is not found in the tree
+        if(curr == null){
+            return root;
+        }
+
+        //case 1 node to be deleted has no children (leaf)
+        if(curr.left ==null && curr.right == null){
+            //if the node to delete is not a root node, then set its parent left, right child to null
+            if(curr!= root){
+                if(parent.left == curr){
+                    parent.left = null;
+                }
+                else{
+                    parent.right = null;
+                }
+            }
+            else{
+                root = null;
+            }
+        }
+        //case 2: node to be deleted has two children
+        else if (curr.left != null && curr.right != null){
+            //find its inorder successor node
+            Node successor = getMinimumKey(curr.right);
+            int val = successor.value;
+            //recursively delete the successor. Node that the successor will have at most one child
+            deleteNode(root,successor.value);
+            //copy value of the successor to the current node
+            curr.value = val;
+        }
+        //case 3 node to be deleted has only one child
+        else{
+            //choose a child node
+            Node child = (curr.left != null)? curr.left : curr.right;
+            //if the node to be deleted is not a root node, set its parent to its child
+            if(curr!= root){
+                if(curr == parent.left) {
+                    parent.left = child;
+                }else{
+                    parent.right = child;
+                }
+            }
+            //if the node to be deleted is a root node, then set the root to the child
+            else{
+                root = child;
+            }
+        }
+        return root;
+    }
     //sum
     public int sum(Node root){
         if(root ==null){
